@@ -1,5 +1,5 @@
-var http = require('http');
-
+var http = require('http'),
+	url  = require('url');
 http.createServer(function (req, res) {
 	var myReq = req;
 	
@@ -20,14 +20,16 @@ http.createServer(function (req, res) {
 		
 		res.end(buf, 'binary');
 		
-	}else if(req.url.match(/test.jpg/)){
+	}else if(req.url.match(/crop/)){
 		res.writeHead(200, {'Content-Type': 'image/jpeg'});
-		console.log('fetching image');
+		var urlData = url.parse(req.url,true);
+		console.log(urlData.query.crop);
+		// http://farm7.static.flickr.com/6002/5949520546_7ff09849d0_o.jpg
 		var g = http.request({
-			host:'farm7.static.flickr.com',
+			host:'farm' + urlData.query.farm + '.static.flickr.com',
 			port: 80,
-			path:'/6020/5906330026_bcf5cc5bdb_o.jpg'
-			//http://farm7.static.flickr.com/6020/5906330026_bcf5cc5bdb_o.jpg
+			path:urlData.query.path
+			//http://farm7.static.flickr.com/6002/5949520546_3b10f92a44_b.jpg
 		}, function(resp){
 			resp.setEncoding('binary');
 			
@@ -45,12 +47,12 @@ http.createServer(function (req, res) {
 				var im = require('imagemagick');
 				im.resize({
 					srcData:respData,
-					width:500,
-					height:500,
+					width:urlData.query.width,
 					sharpening:0.5,
-					crop:'120x120+10+5',
 					format:'jpg',
-					quality:0.5
+					quality:0.9,
+					filter:'Lagrange',
+					customArgs:['-crop',urlData.query.crop, '+repage']
 				}, function(err, stdout, stderr){
 					if(err){
 						throw err;
