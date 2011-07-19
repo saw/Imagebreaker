@@ -1,0 +1,1 @@
+var im = require('imagemagick');
