@@ -54,7 +54,7 @@
 			top: 0px;
 			left: 0px;
 			-webkit-box-shadow: 1px 1px 5px 1px rgba(0,0,0,0.5);
-/*			-webkit-transition: all .1s ease-out;*/
+			background-size: 100%;
 		}
 	</style>
 	
@@ -108,16 +108,26 @@
 				started = false;
 				z.setXY(startPoint);
 				z.setStyle('display', 'block')
-				.setStyle('background', "url('http://farm7.static.flickr.com/6002/5949520546_3b10f92a44_z.jpg')")
+				// .setStyle('background', "url('http://farm7.static.flickr.com/6002/5949520546_3b10f92a44_z.jpg')")
 				.setStyle('height', h + 'px')
-				.setStyle('width', w + 'px')
-				.setStyle('background-position', '-'+ startPoint[0] +'px -' + startPoint[1] + 'px');
+				.setStyle('width', w + 'px');
+				// .setStyle('background-position', '-'+ startPoint[0] +'px -' + startPoint[1] + 'px');
 				
+				var offsetL = Math.round(1024 * (startPoint[0]/640));
+				var offsetT = Math.round(611 * (startPoint[1]/382));
+				var width = w * 2;
+				var height = h * 2;
+				z.setStyle('background', "url('http://tweetsong.stephenwoods.net/crop?farm=7&path=/6002/5949520546_3b10f92a44_b.jpg&width=1024&crop="+width+"x"+height+"%2B"+offsetL+"%2B"+offsetT+"')");
 				window.setTimeout(function(){
+
+					console.log(offsetL);
 					z.setStyle('-webkit-transition', 'all 1s ease-out');
 					z.setXY([600,100]);
 					z.setStyle('-webkit-transform', 'scale(2)');
-					selector.setStyle('opacity', 0);					
+					selector.setStyle('opacity', 0);
+
+					
+					z.setStyle('background-position', '0 0');
 				}, 1000);
 
 			}
