@@ -74,6 +74,7 @@
 	<div id="zoom">
 		
 	</div>
+	<p>Click and drag to get a zoom crop.</p>
 </body>
 <!-- JS -->
 <script type="text/javascript" src="http://yui.yahooapis.com/combo?3.3.0/build/yui/yui-min.js"></script>
@@ -135,11 +136,8 @@
 					z.setStyle('-webkit-transition', 'all 1s ease-out');
 
 					z.setXY([600,100]);
-					z.setStyle('-webkit-transform', 'scale(3)');
-					z.on('webkitTransitionEnd', function(){
-						console.log('foo');
-						
-					})
+					z.setStyle('transform', 'scale(3)');
+
 					selector.setStyle('opacity', 0);
 
 					

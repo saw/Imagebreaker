@@ -4,6 +4,8 @@ var im = require('imagemagick'),
 s404   = '<html><head><title>404!</title></head><body>Sorry, you did something stupid I bet. No image here.</body></html>';
  cacheTimeout = 300000;
 
+//this is badly designed, I keep passing state around...
+
 var imageCache = (function(){
 	
 	var data = {};
