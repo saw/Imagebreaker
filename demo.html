@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta name="viewport" content="width=1036">
+	<title>Crop-magic</title>
+	<style type="text/css" media="screen">
+	
+		body, html{
+			margin: 0;
+			padding: 0;
+		}
+		#preview{
+			background-image: url('http://farm7.static.flickr.com/6002/5949520546_3b10f92a44_z.jpg');
+			width: 640px;
+			height: 382px;
+		}
+		
+		.selector{
+			border: 1px solid #999;
+			height: 200px;
+			width: 200px;
+			position: absolute;
+			display: block;
+		}
+		
+		.selector .handle{
+			position: absolute;
+			background: #fff;
+			height: 10px;
+			width: 10px;
+			border: 1px solid #999;
+		}
+		
+		#tl, #tr{
+			top: -5px;
+		}
+		
+		#bl, #br{
+			bottom: -5px;
+		}
+		
+		#br, #tr{
+			right: -5px;
+		}
+		
+		#bl, #tl{
+			left: -5px;
+		}
+		
+		#zoom{
+			display: none;
+			position: absolute;
+			top: 0px;
+			left: 0px;
+			-webkit-box-shadow: 1px 1px 5px 1px rgba(0,0,0,0.5);
+/*			-webkit-transition: all .1s ease-out;*/
+		}
+	</style>
+	
+	
+</head>
+<body>
+	<div id="preview">
+		<div class="selector">
+			<div class="handle" id="tl"></div>
+			<div class="handle" id="tr"></div>
+			<div class="handle" id="br"></div>
+			<div class="handle" id="bl"></div>								
+		</div>
+	</div>
+	<div id="zoom">
+		
+	</div>
+</body>
+<!-- JS -->
+<script type="text/javascript" src="http://yui.yahooapis.com/combo?3.3.0/build/yui/yui-min.js"></script>
+<script type="text/javascript" charset="utf-8">
+	YUI().use('event', 'node', 'dom', function(Y){
+		var preview = Y.one('#preview');
+		var started = false;
+		var selector = Y.one('.selector');
+		var startPoint = [];
+		
+		preview.on('mousedown', function(e){
+			startPoint = [e.pageX, e.pageY];
+			selector.setXY([e.pageX, e.pageY]);
+			selector.setStyle('opacity', '1');
+			selector.setStyle('height', '0px').setStyle('width', '0px');
+			started = true;
+		});
+		
+		preview.on('mousemove', function(e){
+			if(!started){
+				return;
+			}
+			selector.setStyle('height', (e.clientY - startPoint[1]) + 'px').setStyle('width', (e.clientX - startPoint[0]) + 'px');
+		});
+		
+		preview.on('mouseup', function(e){
+			var z = Y.one('#zoom');
+			var h = selector.get('offsetHeight');
+			var w = selector.get('offsetWidth');
+			z.setStyle('-webkit-transition', '');
+			z.setStyle('-webkit-transform', 'scale(1)');
+			console.log(startPoint);
+			if(started){
+				started = false;
+				z.setXY(startPoint);
+				z.setStyle('display', 'block')
+				.setStyle('background', "url('http://farm7.static.flickr.com/6002/5949520546_3b10f92a44_z.jpg')")
+				.setStyle('height', h + 'px')
+				.setStyle('width', w + 'px')
+				.setStyle('background-position', '-'+ startPoint[0] +'px -' + startPoint[1] + 'px');
+				
+				window.setTimeout(function(){
+					z.setStyle('-webkit-transition', 'all 1s ease-out');
+					z.setXY([600,100]);
+					z.setStyle('-webkit-transform', 'scale(2)');
+					selector.setStyle('opacity', 0);					
+				}, 1000);
+
+			}
+		})
+	});
+</script>
+</html>
