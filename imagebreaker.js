@@ -1,6 +1,7 @@
 var im = require('imagemagick'),
   http = require('http'),
    url = require('url'),
+s404   = '<html><head><title>404!</title></head><body>Sorry, you did something stupid I bet. No image here.</body></html>';
  cacheTimeout = 300000;
 
 var imageCache = (function(){
@@ -18,6 +19,11 @@ var imageCache = (function(){
 		
 		getImage:function(key){
 			return data[key];
+		},
+		
+		destroy:function(key){
+			delete(data[key]);
+			console.log('cache key: ' + key + ' destroyed');
 		}
 	};
 	
@@ -26,9 +32,9 @@ var imageCache = (function(){
 function processImage(respData, urlData, res){
 	var startTime = Date.now();
 	if(!respData){
-		res.writeHead(404, {'Content-Type': 'text/html'});
+		res.writeHead(404, {'Content-Type': 'text/html', 'x-served-by':'node.js'});
 		console.log('no image');
-        res.end('Sorry, you did something stupid I bet. No image here.');
+        res.end(s404 + ' :32');
 		return;
 	}
 	
@@ -37,15 +43,16 @@ function processImage(respData, urlData, res){
 		width:urlData.query.width,
 		sharpening:0.5,
 		format:'jpg',
-		quality:0.9,
+		quality:0.7,
 		filter:'Lagrange',
 		customArgs:['-crop',urlData.query.crop, '+repage']
 	}, function(err, stdout, stderr){
 		if(err){
            res.writeHead(404, {'Content-Type': 'text/html'});
-           res.end('Sorry, you did something stupid I bet. No image here.');
+           res.end(s404 + ' :47');
+		   imageCache.destroy(urlData.query.path);
 		}else{
-            res.writeHead(200, {'Content-Type': 'image/jpeg'});
+            res.writeHead(200, {'Content-Type': 'image/jpeg','x-served-by':'node.js'});
 		    res.end(stdout, 'binary');
 		
 			//log after we are done with this request!
@@ -82,13 +89,17 @@ function handle(req, res){
 
 				resp.on('end', function(){
 					console.log('Image load in: ' + (Date.now() - startTime) + 'ms');
-					imageCache.addImage(urlData.query.path, respData);
+					if(respData){
+						imageCache.addImage(urlData.query.path, respData);
+					}
 					processImage(respData, urlData, res);	
 
 				});
 
 			}).on('error', function(e) {
 				console.log(e.message);
+				res.writeHead(404, {'Content-Type': 'text/html'});
+	           res.end(s404);
 			});
 
 			g.end();
