@@ -11,9 +11,9 @@
 			padding: 0;
 		}
 		#preview{
-			background-image: url('http://farm7.static.flickr.com/6002/5949520546_3b10f92a44_z.jpg');
+			background-image: url('http://farm7.static.flickr.com/6016/5958389646_35409015e0_z.jpg');
 			width: 640px;
-			height: 382px;
+			height: 316px;
 		}
 		
 		.selector{
@@ -54,7 +54,9 @@
 			top: 0px;
 			left: 0px;
 			-webkit-box-shadow: 1px 1px 5px 1px rgba(0,0,0,0.5);
+			-webkit-transform-origin: 0 0;
 			background-size: 100%;
+			cursor: move;
 		}
 	</style>
 	
@@ -76,12 +78,19 @@
 <!-- JS -->
 <script type="text/javascript" src="http://yui.yahooapis.com/combo?3.3.0/build/yui/yui-min.js"></script>
 <script type="text/javascript" charset="utf-8">
-	YUI().use('event', 'node', 'dom', function(Y){
+	YUI().use('dd', 'event', 'node', 'dom', function(Y){
 		var preview = Y.one('#preview');
 		var started = false;
 		var selector = Y.one('.selector');
 		var startPoint = [];
 		
+		var dd = new Y.DD.Drag({
+		        node: '#zoom'
+		    });
+		
+		dd.on('drag:drag', function(){
+			Y.one('#zoom').setStyle('-webkit-transition', 'none');
+		});
 		preview.on('mousedown', function(e){
 			startPoint = [e.pageX, e.pageY];
 			selector.setXY([e.pageX, e.pageY]);
@@ -103,7 +112,7 @@
 			var w = selector.get('offsetWidth');
 			z.setStyle('-webkit-transition', '');
 			z.setStyle('-webkit-transform', 'scale(1)');
-			console.log(startPoint);
+			
 			if(started){
 				started = false;
 				z.setXY(startPoint);
@@ -113,22 +122,29 @@
 				.setStyle('width', w + 'px');
 				// .setStyle('background-position', '-'+ startPoint[0] +'px -' + startPoint[1] + 'px');
 				
-				var offsetL = Math.round(1024 * (startPoint[0]/640));
-				var offsetT = Math.round(611 * (startPoint[1]/382));
-				var width = w * 2;
-				var height = h * 2;
-				z.setStyle('background', "url('http://tweetsong.stephenwoods.net/crop?farm=7&path=/6002/5949520546_3b10f92a44_b.jpg&width=1024&crop="+width+"x"+height+"%2B"+offsetL+"%2B"+offsetT+"')");
+				var offsetL = Math.round(2048 * (startPoint[0]/640));
+				var offsetT = Math.round(1010 * (startPoint[1]/316));
+				var width = Math.round(w * (2048/640));
+				var height = Math.round(h * (1010/316));
+
+				//http://farm7.static.flickr.com/6016/5958389646_b75c6409a2_o.jpg
+				z.setStyle('background', "url('http://tweetsong.stephenwoods.net/crop?farm=7&path=/6016/5958389646_b75c6409a2_o.jpg&width=2048&crop="+width+"x"+height+"%2B"+offsetL+"%2B"+offsetT+"')");
 				window.setTimeout(function(){
 
-					console.log(offsetL);
+
 					z.setStyle('-webkit-transition', 'all 1s ease-out');
+
 					z.setXY([600,100]);
-					z.setStyle('-webkit-transform', 'scale(2)');
+					z.setStyle('-webkit-transform', 'scale(3)');
+					z.on('webkitTransitionEnd', function(){
+						console.log('foo');
+						
+					})
 					selector.setStyle('opacity', 0);
 
 					
 					z.setStyle('background-position', '0 0');
-				}, 1000);
+				}, 2000);
 
 			}
 		})
