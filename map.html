@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html> 
+<head>
+<title>Google Maps JavaScript API v3 Example: Styled MapTypes</title>
+<link href="http://code.google.com/apis/maps/documentation/javascript/examples/default.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>  
+<script>
+
+var map;
+var brooklyn = new google.maps.LatLng(37.766644,-122.430611);
+
+var MY_MAPTYPE_ID = 'hiphop';
+
+function initialize() {
+    
+  var stylez =	[
+	  {
+	    featureType: "road.local",
+	    elementType: "all",
+	    stylers: [
+	      { saturation: 91 },
+	      { lightness: 39 },
+	      { visibility: "off" }
+	    ]
+	  },{
+	    featureType: "road",
+	    elementType: "labels",
+	    stylers: [
+	      { lightness: 56 },
+	      { saturation: -54 },
+	      { visibility: "off" }
+	    ]
+	  },{
+	    featureType: "poi",
+	    elementType: "all",
+	    stylers: [
+	      { visibility: "on" },
+	      { saturation: -84 },
+	      { lightness: 46 }
+	    ]
+	  },{
+	    featureType: "road.arterial",
+	    elementType: "all",
+	    stylers: [
+	      { visibility: "simplified" },
+	      { saturation: -96 },
+	      { lightness: 31 }
+	    ]
+	  },{
+	    featureType: "road.highway",
+	    elementType: "all",
+	    stylers: [
+	      { saturation: -97 },
+	      { lightness: 46 }
+	    ]
+	  },{
+	    featureType: "water",
+	    elementType: "all",
+	    stylers: [
+	      { saturation: -93 }
+	    ]
+	  },{
+	    featureType: "transit",
+	    elementType: "all",
+	    stylers: [
+	      { visibility: "off" }
+	    ]
+	  },
+	{
+	    featureType: "administrative",
+	    elementType: "all",
+	    stylers: [
+	      { visibility: "off" }
+	    ]
+	  },
+	  {
+	    featureType: "poi",
+	    elementType: "all",
+	    stylers: [
+	      { visibility: "off" }
+	    ]
+	  },
+	{
+	    featureType: "water",
+	    elementType: "labels",
+	    stylers: [
+	      { visibility: "off" }
+	    ]
+	  }
+	];
+
+  var mapOptions = {
+    zoom: 12,
+    center: brooklyn,
+    mapTypeControlOptions: {
+       mapTypeIds: [google.maps.MapTypeId.ROADMAP, MY_MAPTYPE_ID]
+    },
+    mapTypeId: MY_MAPTYPE_ID
+  };
+
+  map = new google.maps.Map(document.getElementById("map_canvas"),
+      mapOptions);
+      
+  var styledMapOptions = {
+    name: "Hipster"
+  };
+
+  var jayzMapType = new google.maps.StyledMapType(stylez, styledMapOptions);
+  
+  map.mapTypes.set(MY_MAPTYPE_ID, jayzMapType);
+}
+</script> 
+</head> 
+<body onload="initialize()"> 
+  <div id="map_canvas"></div> 
+</body> 
+</html>
